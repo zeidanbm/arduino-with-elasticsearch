@@ -5,7 +5,7 @@
 #include <NTPClient.h>
 #include <WiFiNINA.h>
 #include "ArduinoHttpClient.h"
-#include "arduino_secrets.h"
+#include "secrets.h"
 
 /////// NTP Settings ///////
 #define NTP_OFFSET   0      // In seconds
@@ -19,9 +19,10 @@ char pass[] = SECRET_PASS;
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, NTP_ADDRESS, NTP_OFFSET, NTP_INTERVAL);
 
-// Replace with you server address and port
-char serverAddress[] = "0331-76-66-96-209.ngrok.io";
+// Elasticsearch address, port and data post url
+char serverAddress[] = SERVER_ADDRESS;
 int port = 80;
+char postUrl[] = POST_URL
 
 WiFiClient wifi;
 HttpClient client = HttpClient(wifi, serverAddress, port);
@@ -35,7 +36,8 @@ long timestamp;
 float distance;
 float duration;
 
-void initWifi() {
+void initWifi()
+{
   // attempt to connect to Wifi network:
   while (status != WL_CONNECTED) {
     Serial.print("Attempting to connect to network: ");
@@ -52,7 +54,8 @@ void initWifi() {
   Serial.println("----------------------------------------");
 }
 
-void setup() {
+void setup()
+{
   Serial.begin(9600);
 
   pinMode(trigPin, OUTPUT);
@@ -94,7 +97,7 @@ void loop()
   postData += timestamp;
   postData += "\"}";
 
-  client.post("/sep769_lab4_index/_doc", contentType, postData);
+  client.post(postUrl, contentType, postData);
 
   // read the status code and body of the response
   int statusCode = client.responseStatusCode();
